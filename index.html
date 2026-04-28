@@ -24,7 +24,7 @@ body {
     border-radius:15px;
     border:3px solid #8b0000;
     width:90%;
-    max-width:600px;
+    max-width:650px;
     position:relative;
 }
 
@@ -62,7 +62,6 @@ body {
     color:#f4e4bc;
     font-size:1.5em;
     white-space:pre-line;
-    display:none;
     min-height:200px;
 }
 
@@ -72,7 +71,7 @@ body {
 
 <body>
 
-<!-- 🎵 BACKGROUND MUSIC -->
+<!-- 🎵 MUSIC -->
 <audio id="bgMusic" loop>
     <source src="glue-song.mp3" type="audio/mpeg">
 </audio>
@@ -103,7 +102,7 @@ body {
     </div>
 </div>
 
-<div id="poem" class="letter"></div>
+<div id="poem" class="letter hidden"></div>
 
 </div>
 
@@ -115,47 +114,187 @@ function nextQ(n){
     document.getElementById("q"+(n+1)).classList.remove("hidden");
 }
 
-// START EVERYTHING
+// START
 function startExperience(){
     document.getElementById("q3").classList.add("hidden");
+    document.getElementById("poem").classList.remove("hidden");
 
-    // 🎵 start music (needs user interaction)
-    const music = document.getElementById("bgMusic");
-    music.play().catch(()=>{});
+    document.getElementById("bgMusic").play().catch(()=>{});
 
-    // ✨ start typing
-    const text = `Hii Nyela,
-
-I told you I moved on.
-
-I didn't.
-
-It's been eleven months.
-
-And somehow,
-I'm still here.`;
-
-    typeWriter(text);
+    currentPart = 0;
+    showNextPart();
 }
 
-// ✨ TYPEWRITER EFFECT
-function typeWriter(text){
+// POEM PARTS (FULL)
+let poemParts = [
+
+`Hii Nyela,
+
+I need to tell you something
+not to change anything
+just because I'm tired of pretending
+
+I told you I moved on
+
+I didn't
+
+it's been eleven months
+of carrying this quietly
+of smiling like it faded
+when it never did`,
+
+`I remember when I told you before
+and you said you couldn't
+
+not because there was nothing
+but because you were closed
+
+and I understood that
+
+but understanding it
+didn't make my feelings disappear`,
+
+`so I stayed
+
+as your friend
+
+and somewhere along the way
+I learned how to hide it
+
+how to make it look like I was okay
+
+but I wasn't`,
+
+`I'm still here
+
+still feeling it
+still hoping in ways I don't say out loud
+
+how your name lighting up my phone
+can change my whole mood
+
+how I still get excited
+over the smallest message from you`,
+
+`how I look for you
+in every crowded place
+
+and somehow
+you're always the one I find
+
+how I notice everything
+the way you laugh
+the way you talk`,
+
+`how I make up little scenarios
+
+of us
+
+like holding your hand
+like being something more
+
+and it's exhausting
+to feel this much
+and act like it's nothing`,
+
+`I don't want to lose you
+
+what we have right now
+means everything to me
+
+so if nothing ever changes
+
+I'll stay
+
+as your friend`,
+
+`but I also can't lie
+
+and say I don't wonder
+
+about us
+
+about what we could've been
+
+or what we could still be`,
+
+`not loudly
+
+not in a way that asks anything from you
+
+just quietly
+
+that maybe someday
+
+you'd let yourself wonder too`
+];
+
+let currentPart = 0;
+
+// SHOW PART
+function showNextPart(){
     const el = document.getElementById("poem");
-    el.style.display = "block";
+    el.innerHTML = "";
+
+    typeWriter(poemParts[currentPart], () => {
+        showContinueButton();
+    });
+}
+
+// TYPEWRITER
+function typeWriter(text, callback){
+    const el = document.getElementById("poem");
     let i = 0;
 
     function typing(){
         if(i < text.length){
             el.innerHTML += text.charAt(i);
             i++;
-            setTimeout(typing, 35); // speed here
+            setTimeout(typing, 25);
+        } else {
+            callback();
         }
     }
 
     typing();
 }
 
-// 😈 RUNAWAY BUTTON
+// CONTINUE BUTTON
+function showContinueButton(){
+    const btn = document.createElement("button");
+    btn.innerText = "continue...";
+    btn.className = "btn";
+    btn.style.marginTop = "20px";
+
+    btn.onclick = () => {
+        btn.remove();
+        currentPart++;
+
+        if(currentPart < poemParts.length){
+            showNextPart();
+        } else {
+            showFinal();
+        }
+    };
+
+    document.getElementById("poem").appendChild(document.createElement("br"));
+    document.getElementById("poem").appendChild(btn);
+}
+
+// FINAL
+function showFinal(){
+    const el = document.getElementById("poem");
+    el.innerHTML += `
+
+I value our friendship.
+
+but I hope…
+even just once
+
+you think about us again.`;
+}
+
+// RUNAWAY BUTTON
 function moveButton(btn){
     const parent = btn.parentElement;
 
